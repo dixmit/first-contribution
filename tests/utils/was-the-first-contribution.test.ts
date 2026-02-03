@@ -6,7 +6,7 @@ import type { Issue, PullRequest } from '@octokit/webhooks-types'
 import { describe, expect, it } from 'vitest'
 import { was_the_first_contribution } from '~src/utils/index.ts'
 import { octokit } from '~tests/helpers.ts'
-import { octokit_listForRepo_mock } from '~tests/setup.ts'
+import { octokit_listForOrg_mock } from '~tests/setup.ts'
 
 describe('was_the_first_contribution()', () => {
   const default_opts = {
@@ -30,7 +30,7 @@ describe('was_the_first_contribution()', () => {
   } as unknown as Issue | PullRequest
 
   it('returns true if the closed PR is the first and only one', async () => {
-    octokit_listForRepo_mock.mockResolvedValue({ data: [first_pr] })
+    octokit_listForOrg_mock.mockResolvedValue({ data: [first_pr] })
 
     const result = await was_the_first_contribution(octokit, {
       ...default_opts,
@@ -43,7 +43,7 @@ describe('was_the_first_contribution()', () => {
 
   it('returns true if the closed PR is the first of several', async () => {
     // Return PRs out of order to test sorting
-    octokit_listForRepo_mock.mockResolvedValue({ data: [second_pr, first_pr] })
+    octokit_listForOrg_mock.mockResolvedValue({ data: [second_pr, first_pr] })
 
     const result = await was_the_first_contribution(octokit, {
       ...default_opts,
@@ -55,7 +55,7 @@ describe('was_the_first_contribution()', () => {
   })
 
   it('returns false if the closed PR is NOT the first', async () => {
-    octokit_listForRepo_mock.mockResolvedValue({ data: [second_pr, first_pr] })
+    octokit_listForOrg_mock.mockResolvedValue({ data: [second_pr, first_pr] })
 
     const result = await was_the_first_contribution(octokit, {
       ...default_opts,
@@ -69,7 +69,7 @@ describe('was_the_first_contribution()', () => {
   it('correctly handles issues', async () => {
     const first_issue = { ...first_pr, pull_request: undefined } as unknown as Issue | PullRequest
     const second_issue = { ...second_pr, pull_request: undefined } as unknown as Issue | PullRequest
-    octokit_listForRepo_mock.mockResolvedValue({ data: [second_issue, first_issue] })
+    octokit_listForOrg_mock.mockResolvedValue({ data: [second_issue, first_issue] })
 
     const result = await was_the_first_contribution(octokit, {
       ...default_opts,
@@ -81,7 +81,7 @@ describe('was_the_first_contribution()', () => {
   })
 
   it('returns false if no contributions are found', async () => {
-    octokit_listForRepo_mock.mockResolvedValue({ data: [] })
+    octokit_listForOrg_mock.mockResolvedValue({ data: [] })
 
     const result = await was_the_first_contribution(octokit, {
       ...default_opts,

@@ -12,10 +12,10 @@ export async function was_the_first_contribution(
   octokit: InstanceType<typeof GitHub>,
   opts: WasTheFirstContributionOpts
 ): Promise<boolean> {
-  const { is_pull_request, issue_or_pull_request, ...listForRepo_opts } = opts
+  const { is_pull_request, issue_or_pull_request, owner } = opts
 
-  const { data: contributions } = await octokit.rest.issues.listForRepo({
-    ...listForRepo_opts,
+  const { data: contributions } = await octokit.rest.issues.listForOrg({
+    org: owner,
     state: 'all',
     sort: 'created',
     direction: 'asc'
