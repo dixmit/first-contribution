@@ -20,7 +20,7 @@ export async function is_first_time_contributor(
   // Fetch all issues and PRs by the author to get a complete history.
   // We set state to 'all' to ensure we don't miss any previous contributions.
   const { data: contributions } = await octokit.rest.search.issuesAndPullRequests({
-    q: `user:${opts.creator} org:${owner}`,
+    q: `author:${opts.creator} org:${owner}`,
     sort: 'created',
     direction: 'asc'
   })

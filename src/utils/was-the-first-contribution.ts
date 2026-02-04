@@ -15,7 +15,7 @@ export async function was_the_first_contribution(
   const { is_pull_request, issue_or_pull_request, owner } = opts
 
   const { data: contributions } = await octokit.rest.search.issuesAndPullRequests({
-    q: `user:${opts.creator} org:${owner}`,
+    q: `author:${opts.creator} org:${owner}`,
     sort: 'created',
     direction: 'asc'
   })
@@ -33,6 +33,8 @@ export async function was_the_first_contribution(
   const first_ever_contribution = relevant_contributions.at(0)
   // Should not happen, but as a safeguard
   if (!first_ever_contribution) return false
+  console.log('First ever contribution found:', first_ever_contribution.number)
+  console.log('Current contribution:', issue_or_pull_request.number)
   return first_ever_contribution.number === issue_or_pull_request.number
 }
 
