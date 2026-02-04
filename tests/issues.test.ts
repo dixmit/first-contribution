@@ -19,7 +19,7 @@ import {
   github_context_mock,
   octokit_createComment_mock,
   octokit_listCommits_mock,
-  octokit_listForOrg_mock,
+  octokit_issuesAndPullRequests_mock,
   reset_github_context_mock
 } from './setup.ts'
 
@@ -32,7 +32,7 @@ describe('issues', () => {
     it('handles when a new issue is opened', async () => {
       octokit_listCommits_mock.mockResolvedValue({ data: [] })
       // The user's first contribution
-      octokit_listForOrg_mock.mockResolvedValue({ data: [{}] })
+      octokit_issuesAndPullRequests_mock.mockResolvedValue({ data: {items: [{}] }})
       octokit_createComment_mock.mockResolvedValue({ data: { html_url: created_comment_url } })
       // Supported event
       github_context_mock.eventName = 'issues'
@@ -55,8 +55,8 @@ describe('issues', () => {
   describe('.closed', () => {
     it('handles when an issue is closed as completed', async () => {
       // This was the user's first and only issue
-      octokit_listForOrg_mock.mockResolvedValue({
-        data: [{ number: 23, created_at: '2025-06-24T12:00:00Z' }]
+      octokit_issuesAndPullRequests_mock.mockResolvedValue({
+        data: {items: [{ number: 23, created_at: '2025-06-24T12:00:00Z' }]}
       })
       octokit_createComment_mock.mockResolvedValue({ data: { html_url: created_comment_url } })
       // Supported event
@@ -78,8 +78,8 @@ describe('issues', () => {
 
     it('handles when an issue is closed as not planned', async () => {
       // This was the user's first and only issue
-      octokit_listForOrg_mock.mockResolvedValue({
-        data: [{ number: 8, created_at: '2025-11-09T12:00:00Z' }]
+      octokit_issuesAndPullRequests_mock.mockResolvedValue({
+        data: {items: [{ number: 8, created_at: '2025-11-09T12:00:00Z' }]}
       })
       octokit_createComment_mock.mockResolvedValue({ data: { html_url: created_comment_url } })
       // Supported event

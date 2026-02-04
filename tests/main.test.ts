@@ -22,7 +22,7 @@ import {
   getOctokit_mock,
   github_context_mock,
   octokit_listCommits_mock,
-  octokit_listForOrg_mock,
+  octokit_issuesAndPullRequests_mock,
   reset_github_context_mock
 } from './setup.ts'
 
@@ -46,7 +46,7 @@ describe('action', () => {
     github_context_mock.payload.action = 'opened'
     github_context_mock.payload.issue = { number: 123, user: { login: 'ghosty' } }
     octokit_listCommits_mock.mockResolvedValue({ data: [] })
-    octokit_listForOrg_mock.mockReturnValue({ data: [{}, {}] })
+    octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{}, {}] }})
 
     await main.run()
 
@@ -60,7 +60,7 @@ describe('action', () => {
     github_context_mock.payload.action = 'closed'
     github_context_mock.payload.issue = { number: 16, user: { login: 'issue-ghosty' } }
     // First-time contributor
-    octokit_listForOrg_mock.mockResolvedValue({ data: [{ number: 16, created_at: '2025-01-01T12:00:00Z' }] })
+    octokit_issuesAndPullRequests_mock.mockResolvedValue({ data: {items: [{ number: 16, created_at: '2025-01-01T12:00:00Z' }] }})
 
     await main.run()
 
@@ -78,7 +78,7 @@ describe('action', () => {
     github_context_mock.payload.issue = undefined
     github_context_mock.payload.pull_request = { number: 19, user: { login: 'pr-ghosty' } }
     // First-time contributor
-    octokit_listForOrg_mock.mockReturnValue({ data: [{ event: { state: 'opened' }, pull_request: [{}] }] })
+    octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{ event: { state: 'opened' }, pull_request: [{}] }]} })
 
     await main.run()
 

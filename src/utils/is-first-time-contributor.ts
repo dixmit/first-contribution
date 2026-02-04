@@ -19,10 +19,10 @@ export async function is_first_time_contributor(
 
   // Fetch all issues and PRs by the author to get a complete history.
   // We set state to 'all' to ensure we don't miss any previous contributions.
-  const { data: contributions } = await octokit.rest.issues.listForOrg({
-    creator,
-    org: owner,
-    state: 'all'
+  const { data: contributions } = await octokit.rest.search.issuesAndPullRequests({
+    q: `user:${opts.creator} org:${owner}`,
+    sort: 'created',
+    direction: 'asc'
   })
 
   const contribution_mode = core.getInput('contribution-mode')
@@ -31,17 +31,17 @@ export async function is_first_time_contributor(
   // If the user has exactly one contribution (the one that triggered this workflow),
   // they are a first-time contributor.
   if (contribution_mode === 'once') {
-    return contributions.length === 1
+    return contributions.items.length === 1
   }
 
   // --- Mode 2: Track first issues and first PRs INDEPENDENTLY ---
   // This is the default behavior. A user can be a first-timer for an issue
   // and also a first-timer for a pull request.
   if (is_pull_request) {
-    const pr_count = contributions.filter(item => item.pull_request).length
+    const pr_count = contributions.items.filter(item => item.pull_request).length
     return pr_count === 1
   } else {
-    const issue_count = contributions.filter(item => !item.pull_request).length
+    const issue_count = contributions.items.filter(item => !item.pull_request).length
     return issue_count === 1
   }
 }

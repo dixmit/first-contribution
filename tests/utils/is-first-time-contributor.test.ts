@@ -5,7 +5,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { is_first_time_contributor } from '~src/utils/index.ts'
 import { core_getInput_spy_mock, is_first_time_contributor_spy, octokit } from '~tests/helpers.ts'
-import { octokit_listCommits_mock, octokit_listForOrg_mock } from '~tests/setup.ts'
+import { octokit_listCommits_mock, octokit_issuesAndPullRequests_mock } from '~tests/setup.ts'
 
 describe('is_first_time_contributor()', () => {
   const default_opts = {
@@ -22,7 +22,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns true if the user has only one contribution (issue or PR)', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{}] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{}] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 
@@ -30,7 +30,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns false if the user has multiple contributions', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{}, { pull_request: {} }] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{}, { pull_request: {} }] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 
@@ -46,7 +46,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns true for a first issue, even with a prior PR', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{}, { pull_request: {} }] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{}, { pull_request: {} }] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 
@@ -54,7 +54,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns false for a subsequent issue', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{}, {}] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{}, {}] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 
@@ -62,7 +62,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns true for a first PR, even with a prior issue', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{ pull_request: {} }, {}] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{ pull_request: {} }, {}] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 
@@ -70,7 +70,7 @@ describe('is_first_time_contributor()', () => {
     })
 
     it('returns false for a subsequent PR', async () => {
-      octokit_listForOrg_mock.mockReturnValue({ data: [{ pull_request: {} }, { pull_request: {} }] })
+      octokit_issuesAndPullRequests_mock.mockReturnValue({ data: {items: [{ pull_request: {} }, { pull_request: {} }] }})
 
       await is_first_time_contributor(octokit, { ...default_opts, is_pull_request: false })
 

@@ -32,7 +32,7 @@ export const reset_github_context_mock = (): void => {
 // Mock octokit client
 export const octokit_addLabels_mock = vitest.fn()
 export const octokit_createComment_mock = vitest.fn()
-export const octokit_listForOrg_mock = vitest.fn()
+export const octokit_issuesAndPullRequests_mock = vitest.fn()
 export const octokit_listCommits_mock = vitest.fn()
 export const octokit_createReactionForIssue_mock = vitest.fn()
 
@@ -46,7 +46,9 @@ export const getOctokit_mock = vitest.fn(
         issues: {
           addLabels: octokit_addLabels_mock,
           createComment: octokit_createComment_mock,
-          listForOrg: octokit_listForOrg_mock
+        },
+        search: {
+          issuesAndPullRequests: octokit_issuesAndPullRequests_mock
         },
         reactions: {
           createForIssue: octokit_createReactionForIssue_mock

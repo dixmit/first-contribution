@@ -14,15 +14,14 @@ export async function was_the_first_contribution(
 ): Promise<boolean> {
   const { is_pull_request, issue_or_pull_request, owner } = opts
 
-  const { data: contributions } = await octokit.rest.issues.listForOrg({
-    org: owner,
-    state: 'all',
+  const { data: contributions } = await octokit.rest.search.issuesAndPullRequests({
+    q: `user:${opts.creator} org:${owner}`,
     sort: 'created',
     direction: 'asc'
   })
 
   // Filter for either issues or PRs
-  const relevant_contributions = contributions.filter(item =>
+  const relevant_contributions = contributions.items.filter(item =>
     is_pull_request ? !!item.pull_request : !item.pull_request
   )
 
